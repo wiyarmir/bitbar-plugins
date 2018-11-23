@@ -8,6 +8,12 @@
 # <bitbar.author.github>bogdal</bitbar.author.github>
 # <bitbar.image>https://github-bogdal.s3.amazonaws.com/bitbar-plugins/review-requests.png</bitbar.image>
 # <bitbar.dependencies>python</bitbar.dependencies>
+# Keys to read:
+# [github-review-requests]
+# access_token=0123456789abcdef
+# username=whoami
+# hostname=github.skyscannertools.net
+# filters=label:whatever
 
 import datetime
 import json
@@ -27,11 +33,6 @@ CONFIG_FILE = os.path.join(os.environ['HOME'], '.bitbarrc')
 # You can replace this if you want to share config with other plugin (e.g. github_ci)
 CONFIG_SECTION = 'github-review-requests'
 
-# Keys to read:
-# access_token=0123456789abcdef
-# username=whoami
-# hostname=github.skyscannertools.net
-# filters=label:whatever
 
 # (optional) PRs with this label (e.g 'in progress') will be grayed out on the list
 WIP_LABEL = 'WIP'
@@ -128,6 +129,8 @@ if __name__ == '__main__':
     print_line('---')
 
     for pr in [r['node'] for r in response['edges']]:
+        if pr['author']['login'] == username:
+            continue
         labels = [l['name'] for l in pr['labels']['nodes']]
         title = '%s - %s' % (pr['repository']['nameWithOwner'], pr['title'])
         title_color = COLOURS.get('inactive' if WIP_LABEL in labels else 'title')
